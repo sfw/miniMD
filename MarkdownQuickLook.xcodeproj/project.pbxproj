@@ -1,0 +1,471 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		100000000000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000101 /* AppDelegate.swift */; };
+		100000000000000000000002 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000102 /* MainWindowController.swift */; };
+		100000000000000000000003 /* DropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000103 /* DropView.swift */; };
+		100000000000000000000004 /* MarkdownRenderer.swift in App Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000104 /* MarkdownRenderer.swift */; };
+		100000000000000000000005 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000105 /* PreviewProvider.swift */; };
+		100000000000000000000006 /* MarkdownRenderer.swift in Extension Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000104 /* MarkdownRenderer.swift */; };
+		100000000000000000000007 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 100000000000000000000201 /* WebKit.framework */; };
+		100000000000000000000008 /* QuickLookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 100000000000000000000202 /* QuickLookUI.framework */; };
+		100000000000000000000009 /* MarkdownQuickLookPreview.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 100000000000000000000302 /* MarkdownQuickLookPreview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
+		100000000000000000000010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000110 /* Assets.xcassets */; };
+		100000000000000000000012 /* MarkdownWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000112 /* MarkdownWebView.swift */; };
+		100000000000000000000013 /* MarkdownQuickLookMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000113 /* MarkdownQuickLookMain.swift */; };
+		100000000000000000000014 /* QuickLookUI.framework in App Frameworks */ = {isa = PBXBuildFile; fileRef = 100000000000000000000202 /* QuickLookUI.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		100000000000000000000401 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 100000000000000000000900 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 100000000000000000000502;
+			remoteInfo = MarkdownQuickLookPreview;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		100000000000000000000602 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				100000000000000000000009 /* MarkdownQuickLookPreview.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		100000000000000000000101 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		100000000000000000000102 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
+		100000000000000000000103 /* DropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropView.swift; sourceTree = "<group>"; };
+		100000000000000000000104 /* MarkdownRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderer.swift; sourceTree = "<group>"; };
+		100000000000000000000105 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		100000000000000000000106 /* App Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		100000000000000000000107 /* Extension Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		100000000000000000000108 /* MarkdownQuickLook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MarkdownQuickLook.entitlements; sourceTree = "<group>"; };
+		100000000000000000000109 /* MarkdownQuickLookPreview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MarkdownQuickLookPreview.entitlements; sourceTree = "<group>"; };
+		100000000000000000000110 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		100000000000000000000112 /* MarkdownWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownWebView.swift; sourceTree = "<group>"; };
+		100000000000000000000113 /* MarkdownQuickLookMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownQuickLookMain.swift; sourceTree = "<group>"; };
+		100000000000000000000201 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		100000000000000000000202 /* QuickLookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookUI.framework; path = System/Library/Frameworks/QuickLookUI.framework; sourceTree = SDKROOT; };
+		100000000000000000000301 /* miniMD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = miniMD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		100000000000000000000302 /* MarkdownQuickLookPreview.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MarkdownQuickLookPreview.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		100000000000000000000603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000014 /* QuickLookUI.framework in App Frameworks */,
+				100000000000000000000007 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000604 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000008 /* QuickLookUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		100000000000000000000701 = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000704 /* App */,
+				100000000000000000000705 /* QuickLookPreview */,
+				100000000000000000000706 /* Shared */,
+				100000000000000000000707 /* Frameworks */,
+				100000000000000000000708 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		100000000000000000000704 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000101 /* AppDelegate.swift */,
+				100000000000000000000102 /* MainWindowController.swift */,
+				100000000000000000000103 /* DropView.swift */,
+				100000000000000000000112 /* MarkdownWebView.swift */,
+				100000000000000000000113 /* MarkdownQuickLookMain.swift */,
+				100000000000000000000110 /* Assets.xcassets */,
+				100000000000000000000106 /* App Info.plist */,
+				100000000000000000000108 /* MarkdownQuickLook.entitlements */,
+			);
+			name = App;
+			path = MarkdownQuickLook/App;
+			sourceTree = "<group>";
+		};
+		100000000000000000000705 /* QuickLookPreview */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000105 /* PreviewProvider.swift */,
+				100000000000000000000107 /* Extension Info.plist */,
+				100000000000000000000109 /* MarkdownQuickLookPreview.entitlements */,
+			);
+			name = QuickLookPreview;
+			path = MarkdownQuickLook/QuickLookPreview;
+			sourceTree = "<group>";
+		};
+		100000000000000000000706 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000104 /* MarkdownRenderer.swift */,
+			);
+			name = Shared;
+			path = MarkdownQuickLook/Shared;
+			sourceTree = "<group>";
+		};
+		100000000000000000000707 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000202 /* QuickLookUI.framework */,
+				100000000000000000000201 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		100000000000000000000708 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000301 /* miniMD.app */,
+				100000000000000000000302 /* MarkdownQuickLookPreview.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		100000000000000000000501 /* MarkdownQuickLook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 100000000000000000000801 /* Build configuration list for PBXNativeTarget "MarkdownQuickLook" */;
+			buildPhases = (
+				100000000000000000000601 /* Sources */,
+				100000000000000000000603 /* Frameworks */,
+				100000000000000000000605 /* Resources */,
+				100000000000000000000602 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				100000000000000000000402 /* PBXTargetDependency */,
+			);
+			name = MarkdownQuickLook;
+			productName = MarkdownQuickLook;
+			productReference = 100000000000000000000301 /* miniMD.app */;
+			productType = "com.apple.product-type.application";
+		};
+		100000000000000000000502 /* MarkdownQuickLookPreview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 100000000000000000000802 /* Build configuration list for PBXNativeTarget "MarkdownQuickLookPreview" */;
+			buildPhases = (
+				100000000000000000000606 /* Sources */,
+				100000000000000000000604 /* Frameworks */,
+				100000000000000000000607 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MarkdownQuickLookPreview;
+			productName = MarkdownQuickLookPreview;
+			productReference = 100000000000000000000302 /* MarkdownQuickLookPreview.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		100000000000000000000900 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					100000000000000000000501 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+					100000000000000000000502 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 100000000000000000000803 /* Build configuration list for PBXProject "MarkdownQuickLook" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 100000000000000000000701;
+			productRefGroup = 100000000000000000000708 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				100000000000000000000501 /* MarkdownQuickLook */,
+				100000000000000000000502 /* MarkdownQuickLookPreview */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		100000000000000000000605 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000010 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000607 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		100000000000000000000601 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000001 /* AppDelegate.swift in Sources */,
+				100000000000000000000013 /* MarkdownQuickLookMain.swift in Sources */,
+				100000000000000000000002 /* MainWindowController.swift in Sources */,
+				100000000000000000000003 /* DropView.swift in Sources */,
+				100000000000000000000012 /* MarkdownWebView.swift in Sources */,
+				100000000000000000000004 /* MarkdownRenderer.swift in App Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000606 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000005 /* PreviewProvider.swift in Sources */,
+				100000000000000000000006 /* MarkdownRenderer.swift in Extension Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		100000000000000000000402 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 100000000000000000000502 /* MarkdownQuickLookPreview */;
+			targetProxy = 100000000000000000000401 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		100000000000000000000811 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		100000000000000000000812 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		100000000000000000000821 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MarkdownQuickLook/App/MarkdownQuickLook.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MarkdownQuickLook/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MarkdownQuickLook;
+				PRODUCT_NAME = miniMD;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		100000000000000000000822 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MarkdownQuickLook/App/MarkdownQuickLook.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MarkdownQuickLook/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MarkdownQuickLook;
+				PRODUCT_NAME = miniMD;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		100000000000000000000831 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MarkdownQuickLook/QuickLookPreview/MarkdownQuickLookPreview.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MarkdownQuickLook/QuickLookPreview/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MarkdownQuickLook.PreviewExtension;
+				PRODUCT_NAME = MarkdownQuickLookPreview;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				WRAPPER_EXTENSION = appex;
+			};
+			name = Debug;
+		};
+		100000000000000000000832 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MarkdownQuickLook/QuickLookPreview/MarkdownQuickLookPreview.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MarkdownQuickLook/QuickLookPreview/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MarkdownQuickLook.PreviewExtension;
+				PRODUCT_NAME = MarkdownQuickLookPreview;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				WRAPPER_EXTENSION = appex;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		100000000000000000000801 /* Build configuration list for PBXNativeTarget "MarkdownQuickLook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000821 /* Debug */,
+				100000000000000000000822 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		100000000000000000000802 /* Build configuration list for PBXNativeTarget "MarkdownQuickLookPreview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000831 /* Debug */,
+				100000000000000000000832 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		100000000000000000000803 /* Build configuration list for PBXProject "MarkdownQuickLook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000811 /* Debug */,
+				100000000000000000000812 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 100000000000000000000900 /* Project object */;
+}
