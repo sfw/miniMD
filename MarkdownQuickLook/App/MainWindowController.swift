@@ -5,6 +5,18 @@ import WebKit
 
 @MainActor
 final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMenuItemValidation, NSTextViewDelegate {
+    private struct PDFSourcePage {
+        let page: CGPDFPage
+        let box: CGRect
+        let yOffset: CGFloat
+    }
+
+    private struct PDFSourceDocument {
+        let pages: [PDFSourcePage]
+        let width: CGFloat
+        let height: CGFloat
+    }
+
     private let titleLabel = NSTextField(labelWithString: "miniMD")
     private let statusLabel = NSTextField(labelWithString: "Ready")
     private let openButton = NSButton()
@@ -904,7 +916,13 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
                 switch result {
                 case .success(let data):
                     do {
-                        let outputData = layout == .paginated ? try Self.paginatedPDFData(from: data) : data
+                        let outputData: Data
+                        switch layout {
+                        case .paginated:
+                            outputData = try Self.paginatedPDFData(from: data)
+                        case .continuous:
+                            outputData = try Self.continuousPDFData(from: data)
+                        }
                         try outputData.write(to: outputURL, options: [.atomic])
                         self.statusLabel.stringValue = "Exported \(outputURL.lastPathComponent)"
                     } catch {
@@ -952,18 +970,12 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
         return object
     }
 
-    private static func paginatedPDFData(from data: Data) throws -> Data {
-        struct SourcePage {
-            let page: CGPDFPage
-            let box: CGRect
-            let yOffset: CGFloat
-        }
-
+    private static func pdfSourceDocument(from data: Data) throws -> PDFSourceDocument {
         guard let provider = CGDataProvider(data: data as CFData), let document = CGPDFDocument(provider) else {
             throw PDFExportError.unreadableSourcePDF
         }
 
-        var sourcePages: [SourcePage] = []
+        var sourcePages: [PDFSourcePage] = []
         var sourceHeight: CGFloat = 0
         var sourceWidth: CGFloat = 0
 
@@ -973,7 +985,7 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
             let box = page.getBoxRect(.mediaBox)
             guard box.width > 0, box.height > 0 else { continue }
 
-            sourcePages.append(SourcePage(page: page, box: box, yOffset: sourceHeight))
+            sourcePages.append(PDFSourcePage(page: page, box: box, yOffset: sourceHeight))
             sourceHeight += box.height
             sourceWidth = max(sourceWidth, box.width)
         }
@@ -981,6 +993,40 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
         guard !sourcePages.isEmpty, sourceWidth > 0, sourceHeight > 0 else {
             throw PDFExportError.unreadableSourcePDF
         }
+
+        return PDFSourceDocument(pages: sourcePages, width: sourceWidth, height: sourceHeight)
+    }
+
+    private static func continuousPDFData(from data: Data) throws -> Data {
+        let source = try pdfSourceDocument(from: data)
+        guard source.pages.count > 1 else {
+            return data
+        }
+
+        var mediaBox = CGRect(origin: .zero, size: CGSize(width: source.width, height: source.height))
+        let output = NSMutableData()
+        guard let consumer = CGDataConsumer(data: output as CFMutableData), let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else {
+            throw PDFExportError.couldNotCreatePDF
+        }
+
+        context.beginPDFPage(nil)
+
+        for sourcePage in source.pages {
+            let xOffset = (source.width - sourcePage.box.width) / 2
+            context.saveGState()
+            context.translateBy(x: xOffset, y: sourcePage.yOffset)
+            context.translateBy(x: -sourcePage.box.minX, y: -sourcePage.box.minY)
+            context.drawPDFPage(sourcePage.page)
+            context.restoreGState()
+        }
+
+        context.endPDFPage()
+        context.closePDF()
+        return output as Data
+    }
+
+    private static func paginatedPDFData(from data: Data) throws -> Data {
+        let source = try pdfSourceDocument(from: data)
 
         let pageSize = CGSize(width: 612, height: 792)
         var mediaBox = CGRect(origin: .zero, size: pageSize)
@@ -992,18 +1038,18 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
         let horizontalPageMargin: CGFloat = 18
         let verticalPageMargin: CGFloat = 18
         let contentHeight = pageSize.height - verticalPageMargin * 2
-        let scale = min(0.85, (pageSize.width - horizontalPageMargin * 2) / sourceWidth)
+        let scale = min(0.85, (pageSize.width - horizontalPageMargin * 2) / source.width)
         let sourceSliceHeight = contentHeight / scale
-        let pageCount = max(1, Int(ceil(sourceHeight / sourceSliceHeight)))
+        let pageCount = max(1, Int(ceil(source.height / sourceSliceHeight)))
         for pageIndex in 0..<pageCount {
             context.beginPDFPage(nil)
             context.saveGState()
 
-            let sourceTop = sourceHeight - CGFloat(pageIndex) * sourceSliceHeight
+            let sourceTop = source.height - CGFloat(pageIndex) * sourceSliceHeight
             let sourceBottom = max(0, sourceTop - sourceSliceHeight)
             let visibleSourceHeight = sourceTop - sourceBottom
             let visibleContentHeight = visibleSourceHeight * scale
-            let xOffset = (pageSize.width - sourceWidth * scale) / 2
+            let xOffset = (pageSize.width - source.width * scale) / 2
             let yOffset = pageSize.height - verticalPageMargin - sourceTop * scale
             let clipRect = CGRect(
                 x: horizontalPageMargin,
@@ -1014,7 +1060,7 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
 
             context.clip(to: clipRect)
 
-            for sourcePage in sourcePages {
+            for sourcePage in source.pages {
                 let pageBottom = sourcePage.yOffset
                 let pageTop = pageBottom + sourcePage.box.height
                 guard sourceBottom < pageTop, sourceTop > pageBottom else { continue }
@@ -1027,7 +1073,7 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
                     width: pageSize.width - horizontalPageMargin * 2,
                     height: (overlapTop - overlapBottom) * scale
                 )
-                let pageXOffset = xOffset + ((sourceWidth - sourcePage.box.width) * scale / 2)
+                let pageXOffset = xOffset + ((source.width - sourcePage.box.width) * scale / 2)
                 context.saveGState()
                 context.clip(to: overlapRect)
                 context.translateBy(x: pageXOffset, y: yOffset + sourcePage.yOffset * scale)
@@ -1121,9 +1167,9 @@ private enum PDFExportError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unreadableSourcePDF:
-            return "Could not read the rendered PDF for pagination."
+            return "Could not read the rendered PDF for export."
         case .couldNotCreatePDF:
-            return "Could not create the paginated PDF."
+            return "Could not create the exported PDF."
         }
     }
 }
