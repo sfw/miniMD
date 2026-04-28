@@ -311,7 +311,75 @@ enum MarkdownRenderer {
               background: var(--row);
             }
 
+            html.mini-md-pdf-export {
+              --canvas: #ffffff;
+              --canvas-subtle: #f6f8fa;
+              --fg: #24292f;
+              --fg-muted: #57606a;
+              --border: #d0d7de;
+              --border-muted: #d8dee4;
+              --accent: #0969da;
+              --code-bg: rgba(175, 184, 193, 0.2);
+              --row: #f6f8fa;
+              --kbd-shadow: rgba(27, 31, 36, 0.12);
+              background: white;
+              color: #111;
+              color-scheme: light;
+            }
+
+            html.mini-md-pdf-export body {
+              background: white;
+              color: #111;
+              padding: 0;
+            }
+
+            html.mini-md-pdf-export .markdown-body {
+              max-width: none;
+            }
+
+            html.mini-md-pdf-export h1,
+            html.mini-md-pdf-export h2,
+            html.mini-md-pdf-export h3,
+            html.mini-md-pdf-export h4,
+            html.mini-md-pdf-export h5,
+            html.mini-md-pdf-export h6 {
+              break-after: avoid;
+              page-break-after: avoid;
+            }
+
+            html.mini-md-pdf-export h1,
+            html.mini-md-pdf-export h2,
+            html.mini-md-pdf-export h3,
+            html.mini-md-pdf-export blockquote,
+            html.mini-md-pdf-export details,
+            html.mini-md-pdf-export figure,
+            html.mini-md-pdf-export img,
+            html.mini-md-pdf-export li,
+            html.mini-md-pdf-export pre,
+            html.mini-md-pdf-export table,
+            html.mini-md-pdf-export tr {
+              break-inside: avoid;
+              page-break-inside: avoid;
+            }
+
+            html.mini-md-pdf-export thead {
+              display: table-header-group;
+            }
+
+            html.mini-md-pdf-export div.pdf-page-spacer {
+              display: block;
+            }
+
+            html.mini-md-pdf-export a {
+              color: #075f63;
+            }
+
             @media print {
+              @page {
+                size: letter;
+                margin: 0;
+              }
+
               html, body {
                 background: white;
                 color: #111;
@@ -323,6 +391,32 @@ enum MarkdownRenderer {
 
               main {
                 max-width: none;
+              }
+
+              h1, h2, h3, h4, h5, h6 {
+                break-after: avoid;
+                page-break-after: avoid;
+              }
+
+              h1, h2, h3,
+              blockquote,
+              details,
+              figure,
+              img,
+              li,
+              pre,
+              table,
+              tr {
+                break-inside: avoid;
+                page-break-inside: avoid;
+              }
+
+              thead {
+                display: table-header-group;
+              }
+
+              div.pdf-page-spacer {
+                display: block;
               }
 
               a {

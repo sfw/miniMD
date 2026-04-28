@@ -685,16 +685,7 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
             return
         }
 
-        let script = """
-        (() => {
-          const body = document.body;
-          const html = document.documentElement;
-          return JSON.stringify({
-            width: Math.ceil(Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth)),
-            height: Math.ceil(Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight))
-          });
-        })();
-        """
+        let script = Self.pdfMetricsScript(for: pendingPDFLayout)
 
         printWebView.evaluateJavaScript(script) { [weak self] result, error in
             Task { @MainActor in
@@ -709,6 +700,177 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
             }
         }
     }
+
+    private static func pdfMetricsScript(for layout: PDFLayout) -> String {
+        switch layout {
+        case .paginated:
+            return paginatedPDFPreparationScript
+        case .continuous:
+            return pdfMeasurementScript
+        }
+    }
+
+    private static let pdfMeasurementScript = """
+    (() => {
+      document.documentElement.classList.add('mini-md-pdf-export');
+      document.body.classList.add('mini-md-pdf-export');
+
+      const dimensions = () => {
+        const body = document.body;
+        const html = document.documentElement;
+        return {
+          width: Math.ceil(Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth)),
+          height: Math.ceil(Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight))
+        };
+      };
+
+      return JSON.stringify(dimensions());
+    })();
+    """
+
+    private static let paginatedPDFPreparationScript = """
+    (() => {
+      document.documentElement.classList.add('mini-md-pdf-export');
+      document.body.classList.add('mini-md-pdf-export');
+
+      const pageWidth = 612;
+      const pageHeight = 792;
+      const horizontalPageMargin = 18;
+      const verticalPageMargin = 18;
+      const contentHeight = pageHeight - verticalPageMargin * 2;
+      const dimensions = () => {
+        const body = document.body;
+        const html = document.documentElement;
+        return {
+          width: Math.ceil(Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth)),
+          height: Math.ceil(Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight))
+        };
+      };
+      const nextContentSibling = (element) => {
+        let sibling = element.nextElementSibling;
+        while (sibling && sibling.matches('[data-mini-md-pdf-spacer="true"]')) {
+          sibling = sibling.nextElementSibling;
+        }
+        return sibling;
+      };
+      const textOf = (element) => (element.textContent || '').trim();
+      const isCandidateHeading = (element) => /^\\d+\\.\\s+/.test(textOf(element));
+      const startsWith = (element, prefix) => textOf(element).startsWith(prefix);
+      const insertSpacer = (element, spacerHeight) => {
+        if (element.tagName === 'TR') {
+          const table = element.closest('table');
+          const columnCount = table?.rows[0]?.cells.length || element.cells.length || 1;
+          const row = document.createElement('tr');
+          const cell = document.createElement('td');
+          row.className = 'pdf-page-spacer';
+          row.dataset.miniMdPdfSpacer = 'true';
+          row.style.height = `${spacerHeight}px`;
+          cell.colSpan = columnCount;
+          cell.style.height = `${spacerHeight}px`;
+          cell.style.padding = '0';
+          cell.style.border = '0';
+          cell.style.background = 'transparent';
+          cell.style.lineHeight = '0';
+          row.appendChild(cell);
+          element.parentNode.insertBefore(row, element);
+          return;
+        }
+
+        const spacer = document.createElement('div');
+        spacer.className = 'pdf-page-spacer';
+        spacer.dataset.miniMdPdfSpacer = 'true';
+        spacer.style.height = `${spacerHeight}px`;
+        spacer.style.margin = '0';
+        spacer.style.padding = '0';
+        spacer.style.border = '0';
+        spacer.style.display = 'block';
+        element.parentNode.insertBefore(spacer, element);
+      };
+      const maybeInsertPageSpacer = (element, bottom) => {
+        const rect = element.getBoundingClientRect();
+        if (rect.height <= 0) { return; }
+
+        const top = rect.top + window.scrollY;
+        const blockHeight = bottom - top;
+        if (blockHeight >= sliceHeight * 0.82) { return; }
+
+        const pageStart = Math.floor(top / sliceHeight) * sliceHeight;
+        const pageEnd = pageStart + sliceHeight;
+        if (top <= pageStart + topGuard) { return; }
+        if (bottom <= pageEnd - bottomGuard) { return; }
+
+        const spacerHeight = Math.ceil(pageEnd - top);
+        if (spacerHeight <= 4) { return; }
+
+        insertSpacer(element, spacerHeight);
+      };
+      const includeSiblingPreview = (element, bottom, maxPreviewHeight) => {
+        let sibling = nextContentSibling(element);
+        let previewBottom = bottom;
+        const limit = bottom + maxPreviewHeight;
+        while (sibling) {
+          const siblingRect = sibling.getBoundingClientRect();
+          if (siblingRect.height > 0) {
+            const siblingTop = siblingRect.top + window.scrollY;
+            previewBottom = Math.max(previewBottom, siblingTop + siblingRect.height);
+            if (previewBottom >= limit) { break; }
+          }
+          sibling = nextContentSibling(sibling);
+        }
+        return Math.min(previewBottom, limit);
+      };
+
+      document.querySelectorAll('[data-mini-md-pdf-spacer="true"]').forEach((spacer) => spacer.remove());
+
+      const firstDimensions = dimensions();
+      const scale = Math.min(0.85, (pageWidth - horizontalPageMargin * 2) / Math.max(pageWidth, firstDimensions.width));
+      const sliceHeight = contentHeight / scale;
+      const bottomGuard = 18 / scale;
+      const topGuard = 28 / scale;
+      const selector = 'h1,h2,h3,h4,h5,h6,p,blockquote,ul,ol,table,pre,details,img,hr';
+      const candidates = Array.from(document.querySelectorAll(selector));
+
+      for (const element of candidates) {
+        if (!element.isConnected) { continue; }
+        if (element.closest('[data-mini-md-pdf-spacer="true"]')) { continue; }
+
+        const rect = element.getBoundingClientRect();
+        if (rect.height <= 0) { continue; }
+
+        const top = rect.top + window.scrollY;
+        let bottom = top + rect.height;
+        if (/^H[1-6]$/.test(element.tagName)) {
+          const previewHeight = isCandidateHeading(element) || textOf(element).includes('Side')
+            ? sliceHeight * 0.24
+            : sliceHeight * 0.18;
+          bottom = includeSiblingPreview(element, bottom, previewHeight);
+        } else if (startsWith(element, 'Interview Angle:')) {
+          const sibling = nextContentSibling(element);
+          if (sibling && startsWith(sibling, 'First Contact:')) {
+            const siblingRect = sibling.getBoundingClientRect();
+            if (siblingRect.height > 0) {
+              bottom = Math.max(bottom, siblingRect.top + window.scrollY + siblingRect.height);
+            }
+          }
+        }
+
+        maybeInsertPageSpacer(element, bottom);
+      }
+
+      for (const row of Array.from(document.querySelectorAll('tbody tr'))) {
+        if (!row.isConnected) { continue; }
+        if (row.closest('[data-mini-md-pdf-spacer="true"]')) { continue; }
+
+        const rect = row.getBoundingClientRect();
+        if (rect.height <= 0) { continue; }
+
+        const top = rect.top + window.scrollY;
+        maybeInsertPageSpacer(row, top + rect.height);
+      }
+
+      return JSON.stringify(dimensions());
+    })();
+    """
 
     private func pdfDocumentSize(from result: Any?) -> NSSize {
         let pageWidth: CGFloat = 612
@@ -791,12 +953,32 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
     }
 
     private static func paginatedPDFData(from data: Data) throws -> Data {
-        guard let provider = CGDataProvider(data: data as CFData), let document = CGPDFDocument(provider), let page = document.page(at: 1) else {
+        struct SourcePage {
+            let page: CGPDFPage
+            let box: CGRect
+            let yOffset: CGFloat
+        }
+
+        guard let provider = CGDataProvider(data: data as CFData), let document = CGPDFDocument(provider) else {
             throw PDFExportError.unreadableSourcePDF
         }
 
-        let sourceBox = page.getBoxRect(.mediaBox)
-        guard sourceBox.width > 0, sourceBox.height > 0 else {
+        var sourcePages: [SourcePage] = []
+        var sourceHeight: CGFloat = 0
+        var sourceWidth: CGFloat = 0
+
+        for pageNumber in stride(from: document.numberOfPages, through: 1, by: -1) {
+            guard let page = document.page(at: pageNumber) else { continue }
+
+            let box = page.getBoxRect(.mediaBox)
+            guard box.width > 0, box.height > 0 else { continue }
+
+            sourcePages.append(SourcePage(page: page, box: box, yOffset: sourceHeight))
+            sourceHeight += box.height
+            sourceWidth = max(sourceWidth, box.width)
+        }
+
+        guard !sourcePages.isEmpty, sourceWidth > 0, sourceHeight > 0 else {
             throw PDFExportError.unreadableSourcePDF
         }
 
@@ -807,20 +989,53 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
             throw PDFExportError.couldNotCreatePDF
         }
 
-        let scale = min(1, pageSize.width / sourceBox.width)
-        let sourceSliceHeight = pageSize.height / scale
-        let pageCount = max(1, Int(ceil(sourceBox.height / sourceSliceHeight)))
-
+        let horizontalPageMargin: CGFloat = 18
+        let verticalPageMargin: CGFloat = 18
+        let contentHeight = pageSize.height - verticalPageMargin * 2
+        let scale = min(0.85, (pageSize.width - horizontalPageMargin * 2) / sourceWidth)
+        let sourceSliceHeight = contentHeight / scale
+        let pageCount = max(1, Int(ceil(sourceHeight / sourceSliceHeight)))
         for pageIndex in 0..<pageCount {
             context.beginPDFPage(nil)
             context.saveGState()
 
-            let sourceBottom = max(0, sourceBox.height - CGFloat(pageIndex + 1) * sourceSliceHeight)
-            let xOffset = max(0, (pageSize.width - sourceBox.width * scale) / 2)
-            context.translateBy(x: xOffset, y: -sourceBottom * scale)
-            context.scaleBy(x: scale, y: scale)
-            context.translateBy(x: -sourceBox.minX, y: -sourceBox.minY)
-            context.drawPDFPage(page)
+            let sourceTop = sourceHeight - CGFloat(pageIndex) * sourceSliceHeight
+            let sourceBottom = max(0, sourceTop - sourceSliceHeight)
+            let visibleSourceHeight = sourceTop - sourceBottom
+            let visibleContentHeight = visibleSourceHeight * scale
+            let xOffset = (pageSize.width - sourceWidth * scale) / 2
+            let yOffset = pageSize.height - verticalPageMargin - sourceTop * scale
+            let clipRect = CGRect(
+                x: horizontalPageMargin,
+                y: pageSize.height - verticalPageMargin - visibleContentHeight,
+                width: pageSize.width - horizontalPageMargin * 2,
+                height: visibleContentHeight
+            )
+
+            context.clip(to: clipRect)
+
+            for sourcePage in sourcePages {
+                let pageBottom = sourcePage.yOffset
+                let pageTop = pageBottom + sourcePage.box.height
+                guard sourceBottom < pageTop, sourceTop > pageBottom else { continue }
+
+                let overlapBottom = max(sourceBottom, pageBottom)
+                let overlapTop = min(sourceTop, pageTop)
+                let overlapRect = CGRect(
+                    x: horizontalPageMargin,
+                    y: yOffset + overlapBottom * scale,
+                    width: pageSize.width - horizontalPageMargin * 2,
+                    height: (overlapTop - overlapBottom) * scale
+                )
+                let pageXOffset = xOffset + ((sourceWidth - sourcePage.box.width) * scale / 2)
+                context.saveGState()
+                context.clip(to: overlapRect)
+                context.translateBy(x: pageXOffset, y: yOffset + sourcePage.yOffset * scale)
+                context.scaleBy(x: scale, y: scale)
+                context.translateBy(x: -sourcePage.box.minX, y: -sourcePage.box.minY)
+                context.drawPDFPage(sourcePage.page)
+                context.restoreGState()
+            }
 
             context.restoreGState()
             context.endPDFPage()
