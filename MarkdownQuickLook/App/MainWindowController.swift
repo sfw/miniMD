@@ -187,8 +187,10 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
             defer: false
         )
         exportWindow.isReleasedWhenClosed = false
+        exportWindow.isExcludedFromWindowsMenu = true
+        exportWindow.collectionBehavior = [.transient, .ignoresCycle]
+        exportWindow.hasShadow = false
         exportWindow.contentView = printWebView
-        exportWindow.orderBack(nil)
         pdfExportWindow = exportWindow
     }
 
@@ -901,6 +903,7 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
     }
 
     private func createPDF(at outputURL: URL, documentSize: NSSize, layout: PDFLayout) {
+        pdfExportWindow?.orderOut(nil)
         printWebView.setFrameSize(documentSize)
         pdfExportWindow?.setContentSize(documentSize)
         printWebView.layoutSubtreeIfNeeded()
@@ -912,6 +915,7 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
             Task { @MainActor in
                 guard let self else { return }
                 self.pendingPDFOutputURL = nil
+                self.pdfExportWindow?.orderOut(nil)
 
                 switch result {
                 case .success(let data):
@@ -937,6 +941,7 @@ final class MainWindowController: NSWindowController, WKNavigationDelegate, NSMe
 
     private func cancelPDFExport(with error: Error) {
         pendingPDFOutputURL = nil
+        pdfExportWindow?.orderOut(nil)
         statusLabel.stringValue = "Export failed"
         presentError(error)
     }
